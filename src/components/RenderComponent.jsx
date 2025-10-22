@@ -1,0 +1,76 @@
+import React, { useState } from 'react';
+import fetchData from '../api/fetch-data-api';
+import { apiDataMapping } from '../utils/helper';
+import { genres } from '../utils/genre-data';
+/**
+ * Displays a grid populated by data fetched from an API
+ *  The data is podcasts objects
+ * @param {object} props
+ * @param {object[]} props.podcastData - array of podcast objects
+ * @param {string} props.podcastData[].image - URL of the image
+ * @param {string} props.podcastData[].title - Title of the podcast
+ * @param {number} props.podcastData[].seasons - Number of seasons for the podcast
+ * @param {string[]} props.podcastData[].genreNames - Names of the genres the podcast belongs to
+ * @param {string} props.podcastData[].updated - Formatted date of last update for the podcast data
+ * @returns {JSX.Element} React element displaying the podcast data
+ */
+// Parent component creates the props to pass to the child component for rendering
+function App () { // First letter capital indicates React component
+  // Set the state
+  // Initialize a empy array which contains the initial data and the function/behaviour for the state/hook
+  // Destructure array
+  const [podcoastArray, setPodcastData] = React.useState([]);
+  // Use state for loading wiget, starts as true and is set to false when the promise is resolved (.finally)
+  const [loading, setLoading] = React.useState(true);
+  // Use state for api error handling within the component 
+  const [error, setError] = React.useState(null);
+
+  // React use effect runs once for actions like fetching data from a api, then runs again as indicated(polling)
+  /**
+   * React effect hook that fetches and processes podcast data from an external API.
+   * This effect is triggered to re-fetch the API data every 2min.
+   * Once data is retrieved, it is mapped and formatted using before being stored in the state.
+   * The effect also handles potential errors by updating the error state and displaying the error message.
+   * @function useEffect
+   * @fires fetchData - Asynchronous API request to retrieve podcast data.
+   * @fires apiDataMapping - Mapps genre data to podcast data.
+   * @listens resetApiCall - Triggers the re-fetch (polling).
+   * @returns {void}
+   */
+  React.useEffect(() => {
+    fetchData().then(data => {
+      const podcoastArray = apiDataMapping(data, genres);
+      setPodcastData(podcoastArray)
+    }).catch(errorMessage => setError(errorMessage.message)).finally(() => setLoading(false));
+  },[]);// Run again on polling of 2min or somthing, should use a data variable to trigger this actually
+  // resetApiCall, needs work (no callback)
+  // Render logic for the error catch and the loading widget inside the parent component
+  // Keeps the data fetching and handling logic seperate from the render of the data in the child component
+  if (loading) return  <div className="w-10 h-10 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin mx-auto my-4"></div>;
+  if (error) return <div>Error: {error}</div>;
+
+  return <RenderData podcastData={podcoastArray}/>
+}
+
+export default App
+// Props passed in as a object argument here and deconstructed in the {} so as to use .map on the array
+// New component that reders the styling template using the props passed by the App parent component
+function RenderData ({ podcastData }) {
+  return ( 
+    <div className='flex flex-col gap-4 bg-gray-200 p-4'>
+      <div className='flex flex-col gap-5 sm:grid sm:grid-cols-2 xl:grid-cols-4'>
+      {podcastData.map(podcast => (
+        <div className='flex flex-col gap-4 p-3.5 bg-white rounded h-full' key={podcast.id}>
+          <img src={podcast.image} alt={podcast.title} />
+          <div className='flex-1'> {podcast.title} </div>
+          <div> Seasons: {podcast.seasons} </div>
+          <div className='flex flex-row justify-between'>
+            {podcast.genreNames.map(genreName => (<div key={genreName} className='bg-gray-300 rounded shadow shadow-black p-1'>{genreName}</div>))}
+          </div>
+          <div> {podcast.updated} </div>
+        </div> 
+      ))}
+      </div>
+    </div>
+  );
+}
