@@ -57,7 +57,7 @@ How I will start:
         Golbal state/state library vs prop drilling
         Which components will pass props vs children
         Which elements might require changes in future (pass children)
-        Are there any elements that might need variations (behaviour/(modular functions inside the main app) passed from parent/main component)
+        Are there any elements that might need variations (behaviour/(modular functions inside the main app ) passed from parent/main component)
         Using event listeners for style/layout changes and subscribers for data modifications
         Always build for SPR and ease of additions/deletions/modifications in future iterations/datasets/refactors
         Somthing to think a little about: Which areas would be better if I need a cross framework (agnostic) solution like Lit
