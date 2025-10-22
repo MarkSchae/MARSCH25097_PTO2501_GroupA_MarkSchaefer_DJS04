@@ -1,0 +1,51 @@
+Planning for dsj 04
+
+Branches:
+    Search
+    Sort 
+    filter
+    Paginate 
+
+Search:
+    Providing the user the ability to perform specific searches of the podcast data using the title 
+        Thinking of using a linked list here (maybe not, more for frequent add/delete at random places)
+        Search must have auto-complete and start loading from first letter
+        Search must also account for letters from the words other than that of the first word 
+
+Sort:
+    Sort results based on alphabetical
+    Sort based on newest/oldest
+        Create a Map for the order of the entries based on when entered/modified and alphabetical
+        Map = no duplicates, fast lookup
+        
+
+Filter:
+    Genre based filter 
+        I think I can just use the current mapping function that i have for genre name and use the same map to link the filter to the podcast backwards
+
+
+Paginate:
+    Managable chunks of data loaded at a time with numbered pages to navigate
+        Have not done this much
+        Need to research
+
+Centralized state: 
+    Using React state or a state management library 
+        Not sure yet which I will be using 
+            For smaller projects prop drilling is fine 
+            I might want to experiment with a global state manager 
+            I want to start using un/subscribers even if not needed yet 
+
+All searches must be syncronized, work together concurrently, and not break with multiple state changes
+
+Architecture choices:
+    Still deciding for the most part 
+        Readable state/main (global or drilling)
+        Keep the data/behaviour management inside the main App component/state 
+        Styling templates and variations in the passed children of components
+        Subscribers to listen for specific changes to certian elements or library state management (research needed)
+
+Tips:
+    Break down each challenge into smaller chunks/branches for experimentation and learning (solution finding)
+    Using vanilla test pages to understand why the framework was created and what the differences are 
+    Starting with a html tailwind page, exporting into a template inside a children tag in a component, might be a more natural workflow
