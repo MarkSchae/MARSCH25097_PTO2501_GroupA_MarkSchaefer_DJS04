@@ -10,7 +10,6 @@
  * 
  */
 export function apiDataMapping (podcastData, genres) {
-    // Testing using new Map for better look up effiecincy
     // new Map takes the returned array from the genre.map and maps the properties to a key value map making the look up for genre title by id faster
     const genreMap = new Map(genres.map(genre => [genre.id, genre.title]));
     const newPodcastArray = podcastData.map(podcast => {
