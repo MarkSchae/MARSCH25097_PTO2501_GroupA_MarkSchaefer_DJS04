@@ -53,7 +53,7 @@ const podcasts = [
 /**
  * @function searchByTitle
  * @param {podcastData<Object[]>} - Array of podcasts object data
- * @param {userInput<string>} - Array of genre object data
+ * @param {userInput<string>} - User input as text
  * @returns {podcastDataByTitle<Object[]>} - Podcast object and the titles of each associated genre
  * 
  */

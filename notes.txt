@@ -48,6 +48,9 @@ Architecture choices:
 Tips:
     Break down each challenge into smaller chunks/branches for experimentation and learning (solution finding)
     Using vanilla test pages to understand why the framework was created and what the differences are 
+    Stick to the brief closely and complete the assignment/task(applies to company level too) as quickly
+        as possible then with any extra time create a branch optimizations version for a choice. 
+        Unless you are given free reign with regards to design/architecture.
     Starting with a html tailwind page, exporting into a template inside a children tag in a component, might be a more natural workflow
 
 How I will start:
