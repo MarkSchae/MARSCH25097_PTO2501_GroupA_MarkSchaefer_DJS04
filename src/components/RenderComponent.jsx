@@ -20,11 +20,19 @@ function App () { // First letter capital indicates React component
   // Initialize a empy array which contains the initial data and the function/behaviour for the state/hook
   // Destructure array
   const [podcoastArray, setPodcastData] = React.useState([]);
+  // Search state
+  const [userSearchInput, setSearch] = React.useState('');
   // Use state for loading wiget, starts as true and is set to false when the promise is resolved (.finally)
   const [loading, setLoading] = React.useState(true);
   // Use state for api error handling within the component 
   const [error, setError] = React.useState(null);
 
+  // Filter the podcasts data by title where the title.includes(userinput)
+  const podcastDataByTitle = podcoastArray.filter(podcast => {
+    const podcastTitle =  podcast.title.toLowerCase();
+    const userSearch = userSearchInput.toLowerCase();
+    return podcastTitle.includes(userSearch);
+    });
   // React use effect runs once for actions like fetching data from a api, then runs again as indicated(polling)
   /**
    * React effect hook that fetches and processes podcast data from an external API.
@@ -49,14 +57,28 @@ function App () { // First letter capital indicates React component
   if (loading) return  <div className="w-10 h-10 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin mx-auto my-4"></div>;
   if (error) return <div>Error: {error}</div>;
 
-  return <RenderData podcastData={podcoastArray}/>
+  // Pass the filtered array or the full array to the child render component
+  const podcastDataToRender = userSearchInput ? podcastDataByTitle : podcoastArray; // full array if search input is empty
+  // Some of the jsx html needs to be here so that the child component does not deal with any behaviour and data
+  return (
+    <div className="p-4">
+      <input
+        type='text'
+        value={userSearchInput} // Inputs the search input as the value
+        onChange={event => setSearch(event.target.value)} // When the input field changes run the setSearch with the new value/input
+        placeholder='Search'
+        className='border p-2 rounded w-full mb-4'
+      />
+      <RenderData podcastData={podcastDataToRender} />
+    </div>
+  );
 }
 
 export default App
 // Props passed in as a object argument here and deconstructed in the {} so as to use .map on the array
 // New component that reders the styling template using the props passed by the App parent component
 function RenderData ({ podcastData }) {
-  return ( 
+  return (
     <div className='flex flex-col gap-4 bg-gray-200 p-4'>
       <div className='flex flex-col gap-5 sm:grid sm:grid-cols-2 xl:grid-cols-4'>
       {podcastData.map(podcast => (
