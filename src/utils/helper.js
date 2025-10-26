@@ -10,7 +10,6 @@
  * 
  */
 export function apiDataMapping (podcastData, genres) {
-    // Testing using new Map for better look up effiecincy
     // new Map takes the returned array from the genre.map and maps the properties to a key value map making the look up for genre title by id faster
     const genreMap = new Map(genres.map(genre => [genre.id, genre.title]));
     const newPodcastArray = podcastData.map(podcast => {
@@ -21,9 +20,9 @@ export function apiDataMapping (podcastData, genres) {
         // Return the podcast with the genreNames 
         // Iterate every podcast object. Iterate every genreId inside the genres value. For each genre id get the mapped value/name for that genre
         const genreNames = podcast.genres.map(genreId => genreMap.get(genreId));
-        const updated = lastUpdated(podcast.updated); 
+        const updatedReadable = lastUpdated(podcast.updated); 
         // Return the podcast and the modified versions of the mapped data
-        return { ...podcast, genreNames, updated };
+        return { ...podcast, genreNames, updatedReadable };
     });
     return newPodcastArray;
 }
