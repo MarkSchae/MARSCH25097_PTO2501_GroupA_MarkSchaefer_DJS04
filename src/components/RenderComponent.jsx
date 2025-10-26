@@ -27,20 +27,25 @@ function App () { // First letter capital indicates React component
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10; // Global for use in multiple functions
+  // Genre filter
+   const [selectedGenre, setSelectedGenre] = useState('all'); // For genre filter input
   // Use state for loading wiget, starts as true and is set to false when the promise is resolved (.finally)
   const [loading, setLoading] = React.useState(true);
   // Use state for api error handling within the component 
   const [error, setError] = React.useState(null);
 
   // Filter the podcasts data by title where the title.includes(userinput)
-  const podcastDataByTitle = podcoastArray.filter(podcast => {
-    const podcastTitle =  podcast.title.toLowerCase();
-    const userSearch = userSearchInput.toLowerCase();
-    return podcastTitle.includes(userSearch);
-    });
-    console.log(podcoastArray);
+  const filteredBySearch = userSearchInput
+    ? podcoastArray.filter(podcast =>
+        podcast.title.toLowerCase().includes(userSearchInput.toLowerCase())
+      )
+    : podcoastArray;
+
+  // Filter by genre
+  const filteredByGenre = selectedGenre === 'all' ? filteredBySearch
+  : filteredBySearch.filter(podcast => podcast.genreNames.some(genreName => genreName === selectedGenre));
   // Sort function
-  const sortedPodcasts = userSearchInput ? [...podcastDataByTitle].sort((podcastA, podcastB) => { // Compares and return 1, -1, 0 to order items
+  const sortedPodcasts = userSearchInput ? [...filteredByGenre].sort((podcastA, podcastB) => { // Compares and return 1, -1, 0 to order items
     switch (sortType) {
       case 'title-asc':
       return podcastA.title.localeCompare(podcastB.title); // For proper string comparison including case
@@ -55,7 +60,7 @@ function App () { // First letter capital indicates React component
     }
   }) // If user input exists then return the search filter and the sort filter
     // If there is not user input then return the original array sorted by sort option
-  : [...podcoastArray].sort((podcastA, podcastB) => { // Compares and return 1, -1, 0 to order items
+  : [...filteredByGenre].sort((podcastA, podcastB) => { // Compares and return 1, -1, 0 to order items
       switch (sortType) {
         case 'title-asc':
         return podcastA.title.localeCompare(podcastB.title); // For proper string comparison including case
@@ -104,6 +109,14 @@ function App () { // First letter capital indicates React component
   // Some of the jsx html needs to be here so that the child component does not deal with any behaviour and data
   return (
     <div className="p-4">
+      <select
+        value={selectedGenre}
+        onChange={event => { setSelectedGenre(event.target.value); setCurrentPage(1); }} // reset page on filter change
+        className='border p-2 rounded mb-4'
+      >
+        <option value='all'>All Genres</option>
+        {genres.map(genre => <option key={genre.id} value={genre.title}>{genre.title}</option>)}
+      </select>
       <input
         type='text'
         value={userSearchInput} // Inputs the search input as the value
