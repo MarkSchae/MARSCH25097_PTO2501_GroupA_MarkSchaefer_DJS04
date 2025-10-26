@@ -24,6 +24,9 @@ function App () { // First letter capital indicates React component
   const [userSearchInput, setSearch] = React.useState('');
   // Sort state
   const [sortType, setSortType] = useState('title'); // default sort by title?
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10; // Global for use in multiple functions
   // Use state for loading wiget, starts as true and is set to false when the promise is resolved (.finally)
   const [loading, setLoading] = React.useState(true);
   // Use state for api error handling within the component 
@@ -66,6 +69,12 @@ function App () { // First letter capital indicates React component
         return 0;
       }
     });
+
+  // Pagination (10 pages)
+  const totalPages = Math.ceil(sortedPodcasts.length / itemsPerPage);// Rounded up to get total pages
+  const startIndex = (currentPage - 1) * itemsPerPage;// Getting the starting and ending index for the slice
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedPodcasts = sortedPodcasts.slice(startIndex, endIndex);// Returning a portion of the array using the index
   // React use effect runs once for actions like fetching data from a api, then runs again as indicated(polling)
   /**
    * React effect hook that fetches and processes podcast data from an external API.
@@ -91,7 +100,7 @@ function App () { // First letter capital indicates React component
   if (error) return <div>Error: {error}</div>;
 
   // Pass the filtered array or the full array to the child render component
-  const podcastDataToRender = sortedPodcasts; // full array if search input is empty
+  const podcastDataToRender = paginatedPodcasts; // full array if search input is empty
   // Some of the jsx html needs to be here so that the child component does not deal with any behaviour and data
   return (
     <div className="p-4">
@@ -132,7 +141,7 @@ function App () { // First letter capital indicates React component
             checked={sortType === 'updated-newest'}
             onChange={event => setSortType(event.target.value)}
           /> 
-          </label>
+        </label>
         <label>
           Oldest
           <input
@@ -142,8 +151,20 @@ function App () { // First letter capital indicates React component
             checked={sortType === 'updated-oldest'}
             onChange={event => setSortType(event.target.value)}
           /> 
-          </label>
-        </div>
+        </label>
+
+      <div className='flex gap-2 mt-4'>
+        {Array.from({ length: totalPages }, (element, i) => i + 1).map(page => (// Array for page numbers display
+          <button
+            key={page}
+            onClick={() => setCurrentPage(page)}
+            className={`px-3 py-1 border rounded ${page === currentPage ? 'bg-blue-500 text-white' : ''}`}
+          >
+            {page}
+          </button>
+        ))}
+      </div>
+      </div>
       <RenderData podcastData={podcastDataToRender} />
     </div>
   );
