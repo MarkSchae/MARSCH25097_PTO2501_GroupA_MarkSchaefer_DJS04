@@ -67,3 +67,13 @@ How I will start:
             I might try both just to see - webcomponents seem to be very important to master in the js environment!
         Try to think a little into the future and use the correct design/DS based on what would be needed in future
         Lastly think about where optimizations can be made for performance 
+
+New workflow tips:
+    Start with what you want the browser to display and how (styling) 
+    Move to where the data/display elements will come from and pass/set the data 
+    Decide what behaviours are neccessary to act on the data at what level of DS 
+    Decide which DS are relavent, keep SRP and encapsulation in mind but try to keep behaviour seperate to styling 
+    Decide how the functions will pass and update data where needed 
+    Create the children components responsible for various renders of different types or just different views of the data 
+    Create the parent for the centralized store of the data and the methods that update the store as well as notify the other components of changes relavent to the data they need 
+    
