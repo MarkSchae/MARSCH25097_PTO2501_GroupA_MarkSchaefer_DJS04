@@ -20,9 +20,9 @@ export function apiDataMapping (podcastData, genres) {
         // Return the podcast with the genreNames 
         // Iterate every podcast object. Iterate every genreId inside the genres value. For each genre id get the mapped value/name for that genre
         const genreNames = podcast.genres.map(genreId => genreMap.get(genreId));
-        const updated = lastUpdated(podcast.updated); 
+        const updatedReadable = lastUpdated(podcast.updated); 
         // Return the podcast and the modified versions of the mapped data
-        return { ...podcast, genreNames, updated };
+        return { ...podcast, genreNames, updatedReadable };
     });
     return newPodcastArray;
 }

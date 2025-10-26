@@ -22,6 +22,8 @@ function App () { // First letter capital indicates React component
   const [podcoastArray, setPodcastData] = React.useState([]);
   // Search state
   const [userSearchInput, setSearch] = React.useState('');
+  // Sort state
+  const [sortType, setSortType] = useState('title'); // default sort by title?
   // Use state for loading wiget, starts as true and is set to false when the promise is resolved (.finally)
   const [loading, setLoading] = React.useState(true);
   // Use state for api error handling within the component 
@@ -32,6 +34,37 @@ function App () { // First letter capital indicates React component
     const podcastTitle =  podcast.title.toLowerCase();
     const userSearch = userSearchInput.toLowerCase();
     return podcastTitle.includes(userSearch);
+    });
+    console.log(podcoastArray);
+  // Sort function
+  const sortedPodcasts = userSearchInput ? [...podcastDataByTitle].sort((podcastA, podcastB) => { // Compares and return 1, -1, 0 to order items
+    switch (sortType) {
+      case 'title-asc':
+      return podcastA.title.localeCompare(podcastB.title); // For proper string comparison including case
+      case 'title-desc':
+      return podcastB.title.localeCompare(podcastA.title);
+      case 'updated-newest':
+      return new Date(podcastB.updated) - new Date(podcastA.updated);
+      case 'updated-oldest':
+      return new Date(podcastA.updated) - new Date(podcastB.updated);
+      default:
+      return 0;
+    }
+  }) // If user input exists then return the search filter and the sort filter
+    // If there is not user input then return the original array sorted by sort option
+  : [...podcoastArray].sort((podcastA, podcastB) => { // Compares and return 1, -1, 0 to order items
+      switch (sortType) {
+        case 'title-asc':
+        return podcastA.title.localeCompare(podcastB.title); // For proper string comparison including case
+        case 'title-desc':
+        return podcastB.title.localeCompare(podcastA.title);
+        case 'updated-newest':
+        return new Date(podcastB.updated) - new Date(podcastA.updated);
+        case 'updated-oldest':
+        return new Date(podcastA.updated) - new Date(podcastB.updated);
+        default:
+        return 0;
+      }
     });
   // React use effect runs once for actions like fetching data from a api, then runs again as indicated(polling)
   /**
@@ -58,7 +91,7 @@ function App () { // First letter capital indicates React component
   if (error) return <div>Error: {error}</div>;
 
   // Pass the filtered array or the full array to the child render component
-  const podcastDataToRender = userSearchInput ? podcastDataByTitle : podcoastArray; // full array if search input is empty
+  const podcastDataToRender = sortedPodcasts; // full array if search input is empty
   // Some of the jsx html needs to be here so that the child component does not deal with any behaviour and data
   return (
     <div className="p-4">
@@ -69,6 +102,48 @@ function App () { // First letter capital indicates React component
         placeholder='Search'
         className='border p-2 rounded w-full mb-4'
       />
+      <div className='flex gap-4 mb-4'>
+        <label>
+          A→Z
+          <input
+            type='radio'
+            name='sort'
+            value='title-asc'// Value is the string used in the set state
+            checked={sortType === 'title-asc'}// Tells React that the state is the UI render too 
+            onChange={event => setSortType(event.target.value)}
+          />
+        </label>
+        <label>
+          Title Z→A
+          <input
+            type='radio'
+            name='sort'
+            value='title-desc'
+            checked={sortType === 'title-desc'}
+            onChange={event => setSortType(event.target.value)}
+          />
+        </label>
+        <label>
+          Newest
+          <input
+            type='radio'
+            name='sort'
+            value='updated-newest'
+            checked={sortType === 'updated-newest'}
+            onChange={event => setSortType(event.target.value)}
+          /> 
+          </label>
+        <label>
+          Oldest
+          <input
+            type='radio'
+            name='sort'
+            value='updated-oldest'
+            checked={sortType === 'updated-oldest'}
+            onChange={event => setSortType(event.target.value)}
+          /> 
+          </label>
+        </div>
       <RenderData podcastData={podcastDataToRender} />
     </div>
   );
@@ -89,7 +164,7 @@ function RenderData ({ podcastData }) {
           <div className='flex flex-row justify-between'>
             {podcast.genreNames.map(genreName => (<div key={genreName} className='bg-gray-300 rounded shadow shadow-black p-1'>{genreName}</div>))}
           </div>
-          <div> {podcast.updated} </div>
+          <div> {podcast.updatedReadable} </div>
         </div> 
       ))}
       </div>
